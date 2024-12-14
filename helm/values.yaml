@@ -1,0 +1,3 @@
+imageRepo: pwablito/pl8gue
+targetFrequency: 1
+targetImage: nginx:latest

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-service-account
+      containers:
+        - name: {{ .Chart.Name }}-controller
+          image: "{{ .Values.imageRepo }}:{{ .Chart.AppVersion }}"
+          args: [ "--config", "/config/config.yml" ]
+          imagePullPolicy: Always
+          # Mount in configmap below
+          volumeMounts:
+            - name: {{ .Release.Name }}-config-volume
+              mountPath: /config
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+      volumes:
+        - name: {{ .Release.Name }}-config-volume
+          configMap:
+            name: {{ .Release.Name }}-configmap
+            items:
+              - key: config.yml
+                path: config.yml
+---
+# Configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yml: |-
+    frequency: {{ .Values.targetFrequency }}
+    image: {{ .Values.targetImage }}
