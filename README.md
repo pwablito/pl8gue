@@ -1,6 +1,5 @@
 # Pl8gue
-Kubernetes application for pl8guing your cluster
-
+Kubernetes application for pl8guing your cluster by spinning up tons of pods.
 ## Build
 ```sh
 docker build -t $REPO:$VERSION app
