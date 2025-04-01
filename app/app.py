@@ -23,6 +23,8 @@ def main():
         config = yaml.safe_load(f)
     config = dacite.from_dict(data_class=Pl8gueConfig, data=config)
     k8s_config.load_incluster_config()
+    # TODO add random deletions
+    # TODO do this with exponential sleeps
     while True:
         create_pod(config.image)
         time.sleep(config.frequency)
